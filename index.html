@@ -30,6 +30,91 @@
   --status-new-text: #4a9eff;
 }
 
+/* ===== LIGHT THEME ===== */
+body.light {
+  --bg-primary: #f0f4f8;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card2: #f5f8fa;
+  --bg-input: #f5f8fa;
+  --accent-teal: #009e73;
+  --accent-teal-dim: #007a58;
+  --accent-amber: #d4840a;
+  --accent-blue: #1a6fd4;
+  --accent-red: #e03c3c;
+  --text-primary: #0d1f35;
+  --text-secondary: #3a5a6e;
+  --text-muted: #7a9aaa;
+  --border: rgba(0,140,100,0.18);
+  --border-mid: rgba(0,140,100,0.30);
+  --status-inprogress-bg: rgba(212,132,10,0.12);
+  --status-inprogress-text: #b36d00;
+  --status-done-bg: rgba(0,158,115,0.12);
+  --status-done-text: #007a58;
+  --status-new-bg: rgba(26,111,212,0.10);
+  --status-new-text: #1a6fd4;
+}
+
+body.light .login-box,
+body.light .tabbar,
+body.light .card,
+body.light .new-post-card,
+body.light .post-card,
+body.light .comment-bubble {
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+body.light thead th { background: #eef3f7; }
+body.light tbody tr:hover { background: rgba(0,158,115,0.05); }
+body.light .stat-card { background: #eef3f7; }
+body.light .post-actions { background: #f5f8fa; }
+body.light .comments-section { background: rgba(0,0,0,0.03); }
+body.light .comment-bubble { background: #f5f8fa; }
+body.light input, body.light textarea, body.light select { background: #f5f8fa; color: #0d1f35; }
+body.light input[readonly] { background: #eef3f7; }
+body.light .login-box { background: #ffffff; }
+body.light #login-overlay { background: rgba(220,235,245,0.97); }
+body.light .tabbar { background: #ffffff; border-bottom-color: var(--border); }
+body.light .btn-logout:hover { border-color: var(--accent-red); color: var(--accent-red); }
+
+/* ===== THEME TOGGLE ===== */
+.theme-toggle {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--bg-card2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.theme-toggle:hover { border-color: var(--border-mid); color: var(--text-primary); }
+
+.toggle-track {
+  width: 34px; height: 18px;
+  background: var(--border-mid);
+  border-radius: 10px;
+  position: relative;
+  transition: background 0.25s;
+}
+
+.toggle-track.on { background: var(--accent-teal); }
+
+.toggle-thumb {
+  width: 14px; height: 14px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px; left: 2px;
+  transition: left 0.25s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.toggle-track.on .toggle-thumb { left: 18px; }
+
 * { margin:0; padding:0; box-sizing:border-box; }
 
 body {
@@ -595,6 +680,13 @@ tbody td { padding: 12px 16px; color: var(--text-primary); vertical-align: top; 
   <div class="tab" onclick="showTab('dashboard', this)">📊 ตรวจสอบสถานะ</div>
   <div class="tab" onclick="showTab('forum', this)">💬 พูดคุย / แลกเปลี่ยน</div>
   <div class="tab-user">
+    <div class="theme-toggle" onclick="toggleTheme()" id="theme-btn" title="เปลี่ยน Theme">
+      <span id="theme-icon">🌙</span>
+      <div class="toggle-track" id="toggle-track">
+        <div class="toggle-thumb"></div>
+      </div>
+      <span id="theme-label">มืด</span>
+    </div>
     <div class="avatar" id="tab-avatar">?</div>
     <span class="user-name" id="tab-username"></span>
     <button class="btn-logout" onclick="doLogout()">ออก</button>
@@ -787,6 +879,31 @@ tbody td { padding: 12px 16px; color: var(--text-primary); vertical-align: top; 
 // ============================================================
 const ISSUE_URL  = 'https://script.google.com/macros/s/AKfycbxBhT03764Q6uIwUuGAuab6CDxoAOkDT9woy7e5hWH6Rcx78tyqNH_XDco4zopP4Zqh/exec';
 const FORUM_URL  = 'https://script.google.com/macros/s/AKfycby595dH-0sMkabFwlex1_z6oZr7xHTGmfVeQLz3-ktC2LlxEuS0SOnJWVoaZcJHHTUrkQ/exec';
+
+// ============================================================
+// THEME
+// ============================================================
+let isLight = localStorage.getItem('spe_theme') === 'light';
+
+function applyTheme(){
+  document.body.classList.toggle('light', isLight);
+  const track = document.getElementById('toggle-track');
+  const icon  = document.getElementById('theme-icon');
+  const label = document.getElementById('theme-label');
+  if(track){
+    track.classList.toggle('on', isLight);
+    icon.textContent  = isLight ? '☀️' : '🌙';
+    label.textContent = isLight ? 'สว่าง' : 'มืด';
+  }
+}
+
+function toggleTheme(){
+  isLight = !isLight;
+  localStorage.setItem('spe_theme', isLight ? 'light' : 'dark');
+  applyTheme();
+}
+
+applyTheme();
 
 // ============================================================
 // LOGIN — localStorage จำชื่อถาวร
